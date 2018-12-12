@@ -7,8 +7,28 @@ import PropTypes from 'prop-types';
 import Spinner from '../layout/Spinner';
 
 class Clients extends Component {
+  state = {
+    totalOwed: null
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    const { clients } = props;
+
+    if (clients) {
+      const total = clients.reduce(
+        (total, client) => total + parseFloat(client.balance.toString()),
+        0
+      );
+
+      return { totalOwed: total };
+    }
+
+    return null;
+  }
+
   render() {
     const { clients } = this.props;
+    const { totalOwed } = this.state;
 
     if (clients) {
       return (
@@ -16,11 +36,19 @@ class Clients extends Component {
           <div className="row">
             <div className="col-md-6">
               <h2>
+                {' '}
                 <i className="fas fa-users" />
-                Clients
+                Clients{' '}
               </h2>
             </div>
-            <div className="col-md-6" />
+            <div className="col-md-6">
+              <h5 className="text-right text-secondary">
+                Total Owned{' '}
+                <span className="text-primary">
+                  ${parseFloat(totalOwed).toFixed(2)}
+                </span>
+              </h5>
+            </div>
           </div>
           <table className="table table-striped">
             <thead className="thead-inverse">
@@ -44,8 +72,7 @@ class Clients extends Component {
                       to={`/client/${client.id}`}
                       className="bth btn-secondary btn-sm"
                     >
-                      <i className="fas fa-arrow-circle-right" />
-                      Detailes
+                      <i className="fas fa-arrow-circle-right" /> Details
                     </Link>
                   </td>
                 </tr>
